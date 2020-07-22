@@ -1,0 +1,27 @@
+{
+  "name": "bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "start.prod": "cross-env NODE_ENV=production npm start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cross-env": "^7.0.2",
+    "node-slack-upload": "^2.0.0",
+    "slackbots": "^1.2.0"
+  },
+  "dependencies": {
+    "cron": "^1.8.2",
+    "dotenv": "^8.2.0",
+    "fetch": "^1.1.0",
+    "html-parser": "^0.11.0"
+  },
+  "engines": {
+    "node": "^10.16.0"
+  }
+}
