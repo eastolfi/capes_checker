@@ -1,3 +1,4 @@
+const express = require('express')
 const SlackBot = require('slackbots')
 const Parser = require('html-parser')
 const { CronJob } = require('cron')
@@ -5,7 +6,8 @@ const fetchUrl = require("fetch").fetchUrl;
 
 require('dotenv').config()
 
-const url = process.env.PAGE_URL
+const app = express()
+
 const botParams = {
     icon_emoji: ':cat:'
 };
@@ -35,7 +37,12 @@ const fetch = async (url) => {
     })
 }
 
+const getPageUrl = () => {
+    return process.env.PAGE_URL
+}
+
 const checkPageContent = async () => {
+    const url = getPageUrl()
     const res = await fetch(url);
     const body = res.toString()
     
@@ -51,15 +58,34 @@ const checkPageContent = async () => {
     return hasInfo
 }
 
-
 const bot = initBot()
-let cron = new CronJob(process.env.CRON_TIME, async () => {
-    const hasInfo = await checkPageContent()
-    
-    if (hasInfo && bot) {
-        console.log('New info posted')
-        bot.postMessageToChannel('general', `¡Hay información disponible! Compruébalo <${url}|*aquí*>`, botParams);
-    }
-});
 
-cron.start();
+const initJob = () => {
+    let cron = new CronJob(process.env.CRON_TIME, async () => {
+        const hasInfo = await checkPageContent()
+        
+        if (hasInfo && bot) {
+            console.log('New info posted')
+            bot.postMessageToChannel('general', `¡Hay información disponible! Compruébalo <${getPageUrl()}|*aquí*>`, botParams);
+        }
+    });
+
+    cron.start();
+    console.log('Job started')
+}
+
+app.get('/', (req, res) => {
+    res.send('Capes Checker working')
+})
+
+app.get('/restart', (req, res) => {
+    initJob()
+    res.send(`Job restarted. New url -> ${getPageUrl()}`)
+})
+
+app.listen(process.env.PORT || 3000, () => {
+    console.log('Server started')
+    initJob()
+})
+
+
