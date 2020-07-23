@@ -46,6 +46,8 @@ const checkPageContent = async () => {
     const res = await fetch(url);
     const body = res.toString()
     
+    console.log(`Checking ${url} for new information...`)
+    
     let hasInfo = false
     const parser = Parser.parse(body, {
         text(text) {
